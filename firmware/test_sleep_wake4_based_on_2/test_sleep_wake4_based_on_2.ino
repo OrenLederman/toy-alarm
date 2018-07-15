@@ -9,7 +9,8 @@ int interruptLedPin = 2;      // LED to show the action of a interrupt
 
 void setup() {
 
-  pinMode(switchPin, INPUT_PULLUP);
+  pinMode(switchPin, INPUT);
+  digitalWrite(switchPin, LOW); 
   pinMode(switchPin2, INPUT_PULLUP);
   pinMode(awakeLedPin, OUTPUT);         // sets the digital pin as output
   pinMode(interruptLedPin, OUTPUT);   // sets the digital pin as output
