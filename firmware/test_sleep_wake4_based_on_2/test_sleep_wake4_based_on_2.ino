@@ -19,6 +19,8 @@ void setup() {
   pinMode(interruptLedPin, OUTPUT);   // sets the digital pin as output
   pinMode(interruptLedPin2, OUTPUT);   // sets the digital pin as output
 
+  digitalWrite (interruptLedPin, HIGH);       // turn off the interrupt LED
+  digitalWrite (interruptLedPin2, HIGH);       // turn off the interrupt LED
   delay(500);
   
 } // setup
@@ -46,20 +48,20 @@ void sleep() {
     sei();                                  // Enable interrupts
     
     delay(500);                           // wait 2 sec. so humans can notice the interrupt LED to show the interrupt is handled
-    digitalWrite (interruptLedPin, LOW);       // turn off the interrupt LED
-    digitalWrite (interruptLedPin2, LOW);       // turn off the interrupt LED
+    digitalWrite (interruptLedPin, HIGH);       // turn off the interrupt LED
+    digitalWrite (interruptLedPin2, HIGH);       // turn off the interrupt LED
 
     
     } // sleep
 
 void blinkLed(void) {
   // Switch Led state
-  digitalWrite(interruptLedPin, HIGH);
+  digitalWrite(interruptLedPin, LOW);
 }
 
 void blinkLed2(void) {
   // Switch Led state
-  digitalWrite(interruptLedPin2, HIGH);
+  digitalWrite(interruptLedPin2, LOW);
 }
 
 
