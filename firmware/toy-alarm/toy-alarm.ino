@@ -3,38 +3,38 @@
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
 
-const int switchPin                     = 0;
-const int switchPin2                     = 2;
+const int keyPin = 0;         // Pin pulled up when key A is pressed on keyfab
+const int keyPin2 = 2;        // Pin pulled up when key B is pressed on keyfab
 
-int awakeLedPin = 3;            // LED connected to digital pin 0. Shows when the circuit is awake
-int interruptLedPin = 1;      // LED to show the action of a interrupt
-int interruptLedPin2 = 4;      // LED to show the action of a interrupt
+int mosfetPin = 3;            // Pin used for turning on mosfet
+int soundTriggerPin = 1;      // Pin used for triggering MP3 player
+int soundTriggerPin2 = 4;     // Pin used for triggering MP3 player
 
 volatile int pinToPull = -1;
 
 
 void setup() {
 
-  pinMode(switchPin, INPUT);
-  pinMode(switchPin2, INPUT);
+  pinMode(keyPin, INPUT);
+  pinMode(keyPin2, INPUT);
   
-  pinMode(awakeLedPin, OUTPUT);         // sets the digital pin as output
+  pinMode(mosfetPin, OUTPUT);         // sets the digital pin as output
 
   // Setting up the mosfet pin to LOW so it doesn't turn on the mp3 player
-  digitalWrite (awakeLedPin, LOW);       
+  digitalWrite (mosfetPin, LOW);       
 
   // Setting sound triggers to INPUT so the mp3 player doesn't suck
   // power though these pins at startup
-  pinMode(interruptLedPin, INPUT);  
-  pinMode(interruptLedPin2, INPUT); 
+  pinMode(soundTriggerPin, INPUT);  
+  pinMode(soundTriggerPin2, INPUT); 
   delay(500);
 
   // Set sound triggers to output, and set to high (need to pull down to trigger the player)
-  pinMode(interruptLedPin, OUTPUT);   // sets the digital pin as output
-  pinMode(interruptLedPin2, OUTPUT);   // sets the digital pin as output
+  pinMode(soundTriggerPin, OUTPUT);   // sets the digital pin as output
+  pinMode(soundTriggerPin2, OUTPUT);   // sets the digital pin as output
   delay(100);
-  digitalWrite (interruptLedPin, HIGH);   
-  digitalWrite (interruptLedPin2, HIGH);  
+  digitalWrite (soundTriggerPin, HIGH);   
+  digitalWrite (soundTriggerPin2, HIGH);  
 
   
 } // setup
@@ -42,8 +42,8 @@ void setup() {
 void sleep() {
 
     //GIMSK |= _BV(PCIE);                     // Enable Pin Change Interrupts
-    attachPCINT(digitalPinToPCINT(switchPin), markTriggered, CHANGE);
-    attachPCINT(digitalPinToPCINT(switchPin2), markTriggered2, CHANGE);
+    attachPCINT(digitalPinToPCINT(keyPin), markTriggered, CHANGE);
+    attachPCINT(digitalPinToPCINT(keyPin2), markTriggered2, CHANGE);
 
 
     ADCSRA &= ~_BV(ADEN);                   // ADC off
@@ -54,19 +54,19 @@ void sleep() {
     sleep_cpu();                            // sleep
 
     cli();                                  // Disable interrupts
-    detachPCINT(digitalPinToPCINT(switchPin));
-    detachPCINT(digitalPinToPCINT(switchPin2));
+    detachPCINT(digitalPinToPCINT(keyPin));
+    detachPCINT(digitalPinToPCINT(keyPin2));
     sleep_disable();                        // Clear SE bit
     ADCSRA |= _BV(ADEN);                    // ADC on
     sei();                                  // Enable interrupts
     } // sleep
 
 void markTriggered(void) {
-  pinToPull = interruptLedPin;
+  pinToPull = soundTriggerPin;
 }
 
 void markTriggered2(void) {
-  pinToPull = interruptLedPin2;
+  pinToPull = soundTriggerPin2;
 }
 
 
@@ -74,13 +74,13 @@ void loop() {
   sleep();
   if (pinToPull >= 0) {
     // Play sound
-    digitalWrite(awakeLedPin, HIGH);      // Turn on power to mp3 player
+    digitalWrite(mosfetPin, HIGH);      // Turn on power to mp3 player
     delay(300);    
     digitalWrite(pinToPull, LOW);  // Trigger sound
     delay(100);
     digitalWrite(pinToPull, HIGH); // Stop trigger
     delay(1000);                          // let it play for 1 sec                     
-    digitalWrite(awakeLedPin, LOW);       // Turn off power
+    digitalWrite(mosfetPin, LOW);       // Turn off power
 
     // Reset stuff
     pinToPull = -1;
