@@ -6,8 +6,8 @@
 const int switchPin                     = 0;
 const int switchPin2                     = 2;
 
-int awakeLedPin = 1;            // LED connected to digital pin 0. Shows when the circuit is awake
-int interruptLedPin = 3;      // LED to show the action of a interrupt
+int awakeLedPin = 3;            // LED connected to digital pin 0. Shows when the circuit is awake
+int interruptLedPin = 1;      // LED to show the action of a interrupt
 int interruptLedPin2 = 4;      // LED to show the action of a interrupt
 
 volatile int pinToPull = -1;
@@ -19,13 +19,23 @@ void setup() {
   pinMode(switchPin2, INPUT);
   
   pinMode(awakeLedPin, OUTPUT);         // sets the digital pin as output
+
+  // Setting up the mosfet pin to LOW so it doesn't turn on the mp3 player
+  digitalWrite (awakeLedPin, LOW);       
+
+  // Setting sound triggers to INPUT so the mp3 player doesn't suck
+  // power though these pins at startup
+  pinMode(interruptLedPin, INPUT);  
+  pinMode(interruptLedPin2, INPUT); 
+  delay(500);
+
+  // Set sound triggers to output, and set to high (need to pull down to trigger the player)
   pinMode(interruptLedPin, OUTPUT);   // sets the digital pin as output
   pinMode(interruptLedPin2, OUTPUT);   // sets the digital pin as output
+  delay(100);
+  digitalWrite (interruptLedPin, HIGH);   
+  digitalWrite (interruptLedPin2, HIGH);  
 
-  digitalWrite (interruptLedPin, HIGH);       // turn off the interrupt LED
-  digitalWrite (interruptLedPin2, HIGH);       // turn off the interrupt LED
-  
-  delay(500);
   
 } // setup
 
@@ -38,7 +48,6 @@ void sleep() {
 
     ADCSRA &= ~_BV(ADEN);                   // ADC off
     set_sleep_mode(SLEEP_MODE_PWR_DOWN);    // replaces above statement
-    digitalWrite(awakeLedPin, LOW); 
     
     sleep_enable();                         // Sets the Sleep Enable bit in the MCUCR Register (SE BIT)
     sei();                                  // Enable interrupts
