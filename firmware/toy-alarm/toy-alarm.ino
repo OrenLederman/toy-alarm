@@ -20,8 +20,8 @@ void setup() {
   
   pinMode(mosfetPin, OUTPUT);         // sets the digital pin as output
 
-  // Setting up the mosfet pin to LOW so it doesn't turn on the mp3 player
-  digitalWrite (mosfetPin, LOW);       
+  // Setting up the mosfet pin to HIGH (P-CHANNEL)
+  digitalWrite (mosfetPin, HIGH);       
 
   // Setting sound triggers to INPUT so the mp3 player doesn't suck
   // power though these pins at startup
@@ -33,8 +33,8 @@ void setup() {
   pinMode(soundTriggerPin, OUTPUT);   // sets the digital pin as output
   pinMode(soundTriggerPin2, OUTPUT);   // sets the digital pin as output
   delay(100);
-  digitalWrite (soundTriggerPin, HIGH);   
-  digitalWrite (soundTriggerPin2, HIGH);  
+  digitalWrite (soundTriggerPin, LOW);  // pins set to low so they dont feed the mp3 player when it's uspposed to be off
+  digitalWrite (soundTriggerPin2, LOW); // pins set to low so they dont feed the mp3 player when it's uspposed to be off 
 
   
 } // setup
@@ -74,13 +74,21 @@ void loop() {
   sleep();
   if (pinToPull >= 0) {
     // Play sound
-    digitalWrite(mosfetPin, HIGH);      // Turn on power to mp3 player
+    digitalWrite(mosfetPin, LOW);      // Turn on power to mp3 player
+    digitalWrite (soundTriggerPin, HIGH);  // pins set to high
+    digitalWrite (soundTriggerPin2, HIGH); // pins set to high
+    
     delay(300);    
     digitalWrite(pinToPull, LOW);  // Trigger sound
     delay(100);
-    digitalWrite(pinToPull, HIGH); // Stop trigger
-    delay(1000);                          // let it play for 1 sec                     
-    digitalWrite(mosfetPin, LOW);       // Turn off power
+    digitalWrite (soundTriggerPin, HIGH);  // stop trigger
+    digitalWrite (soundTriggerPin2, HIGH); // stop trigger
+    
+    delay(2000);                          // let it play for 1 sec                     
+    digitalWrite(mosfetPin, HIGH);       // Turn off power
+    digitalWrite (soundTriggerPin, LOW);  // pins set to low so they dont feed the mp3 player when it's uspposed to be off
+    digitalWrite (soundTriggerPin2, LOW); // pins set to low so they dont feed the mp3 player when it's uspposed to be off 
+    
 
     // Reset stuff
     pinToPull = -1;
