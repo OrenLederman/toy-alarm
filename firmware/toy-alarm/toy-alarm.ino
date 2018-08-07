@@ -84,7 +84,7 @@ void loop() {
     digitalWrite (soundTriggerPin, HIGH);  // stop trigger
     digitalWrite (soundTriggerPin2, HIGH); // stop trigger
     
-    delay(2000);                          // let it play for 1 sec                     
+    delay(1200);                          // let it play for 1 sec                     
     digitalWrite(mosfetPin, HIGH);       // Turn off power
     digitalWrite (soundTriggerPin, LOW);  // pins set to low so they dont feed the mp3 player when it's uspposed to be off
     digitalWrite (soundTriggerPin2, LOW); // pins set to low so they dont feed the mp3 player when it's uspposed to be off 
